@@ -1,16 +1,24 @@
 package com.dmm.task;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.dmm.task.data.entity.Tasks;
 import com.dmm.task.data.repository.TasksRepository;
+import com.dmm.task.form.TasksForm;
+import com.dmm.task.service.AccountUserDetails;
 
 @Controller
 public class MainController {
@@ -26,7 +34,8 @@ public class MainController {
 		int thisMonth = nowDate.getMonth().getValue();
 		String month = thisYear + "年" + thisMonth + "月";
 		model.addAttribute("month", month);
-		
+
+		//カレンダーを表示するための処理を記載
 List<List<LocalDate>> matrix = new ArrayList<>();
 		
 		//その月の1日（ついたち）のLocalDataを取得する
@@ -119,13 +128,15 @@ List<List<LocalDate>> matrix = new ArrayList<>();
 				break;
 			}
 		}
-		System.out.println(matrix);
-		
-		model.addAttribute("matrix", matrix);
 
-		//tasksのデータのListを取得
-		List<Tasks> lists = tasksRepository.findAll();
-		model.addAttribute("tasks", lists);
+		
+		System.out.println(matrix);
+		model.addAttribute("matrix", matrix);
+		
+		Map<LocalDate,List<Tasks>> map= new TreeMap<>();
+		
+		
+		model.addAttribute("tasks", map);
 
 		return "main";
 
@@ -136,11 +147,41 @@ List<List<LocalDate>> matrix = new ArrayList<>();
 		return "create";
 
 	}
+	
+	@GetMapping("/main/create")
+	public String setForm(Model model) {
+		TasksForm tasksForm = new TasksForm();
+		model.addAttribute("tasksForm", tasksForm);
+		return "create";
+		
+	}
+	
+	@PostMapping("/main/create")
+	public String register(TasksForm tasksForm,@AuthenticationPrincipal AccountUserDetails user) {
+		Tasks tasksDatabase = new Tasks();
+		tasksDatabase.setTitle(tasksForm.getText());
+		tasksDatabase.setName(user.getName());
+		tasksDatabase.setText(tasksForm.getText());
+		tasksDatabase.setDate(LocalDateTime.now());
+		tasksDatabase.setDone(false);
+		
+		tasksRepository.save(tasksDatabase);
+		
+		return "redirect:/main";
+		
+	}
 
 	@GetMapping("/main/edit/{id}")
 	public String edit() {
 		return "edit";
 
+	}
+	
+	@PostMapping("/main/delete/{id}")
+	public String delete(@PathVariable Integer id) {
+		tasksRepository.deleteById(id);
+		return "redirect:/edit";
+		
 	}
 
 }

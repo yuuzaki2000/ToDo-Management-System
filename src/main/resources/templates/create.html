@@ -24,11 +24,11 @@
   <div class="form sd">
    <div class="title sd">Regist</div>
    <div class="form_box sd">
-    <form method="post" th:action="@{/main/create}">
+    <form th:object="${tasksForm}" method="post" th:action="@{/main/create}">
      <div class="form_row sd">
       <p class="form_text sd">タイトル：</p>
       <div class="form_item">
-       <input type="text" name="title" class="item">
+       <input th:field="*{title}" type="text" name="title" class="item">
       </div>
      </div>
      <div class="form_row sd">
@@ -41,7 +41,7 @@
      <div class="form_row sd">
       <p class="form_text sd">内容:</p>
       <div class="form_item">
-       <textarea name="text" cols="80" rows="10" class="item"></textarea>
+       <textarea th:field="*{text}" name="text" cols="80" rows="10" class="item"></textarea>
       </div>
      </div>
      <button class="form_button sd">
