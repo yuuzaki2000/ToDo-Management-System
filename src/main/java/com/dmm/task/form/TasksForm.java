@@ -8,5 +8,7 @@ public class TasksForm {
 	
 	private String text;
 	
+	private String date;
+	
 
 }
