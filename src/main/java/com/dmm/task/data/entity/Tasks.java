@@ -1,6 +1,6 @@
 package com.dmm.task.data.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +22,7 @@ public class Tasks {
 	
 	private String text;
 	
-	private LocalDate date;
+	private LocalDateTime date;
 	
 	private Boolean done;
 	

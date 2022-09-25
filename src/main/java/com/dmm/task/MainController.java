@@ -2,7 +2,9 @@ package com.dmm.task;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -149,9 +151,11 @@ public class MainController {
 		//map作成
 		Map<LocalDate, List<Tasks>> map = new TreeMap<>();
 				
+		int IntDay=(int) ChronoUnit.DAYS.between(fisrtDayOfFirstWeek,lastDayOfLastWeek)+1;
+		
+		System.out.println(IntDay);
 		
 		LocalDateTime dateMap;
-		
 		LocalDateTime LDTfirstDayOfFirstWeek = fisrtDayOfFirstWeek.atStartOfDay();
 		
 		dateMap = LDTfirstDayOfFirstWeek;
@@ -159,8 +163,10 @@ public class MainController {
 			LocalDateTime afterDay = dateMap.plusDays(1);
 			dateMap = afterDay;
 			LocalDate d =dateMap.toLocalDate();
-			map.put(d, tasksRepository.findByDateBetween(dateMap,dateMap.plusDays(1),user.getName()));
-			if(date.compareTo(lastDayOfLastWeek)<=0) {
+			LocalTime t = LocalTime.of(23, 59);
+			LocalDateTime dt = LocalDateTime.of(d, t);
+			map.put(d, tasksRepository.findByDateBetween(dateMap,dt,user.getName()));
+			if(map.size()== IntDay) {
 				break;
 			}
 		} 
@@ -198,7 +204,7 @@ public class MainController {
 		tasksDatabase.setName(user.getName());
 		tasksDatabase.setText(tasksForm.getText());
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate dateData = LocalDate.parse(tasksForm.getDate(), dtf);
+		LocalDateTime dateData = LocalDateTime.parse(tasksForm.getDate(), dtf);
 		tasksDatabase.setDate(dateData);
 		tasksDatabase.setDone(false);
 
