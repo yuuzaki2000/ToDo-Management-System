@@ -28,7 +28,16 @@ public class MainController {
 	@GetMapping("/main")
 	public String Main(@AuthenticationPrincipal AccountUserDetails user, Model model) {
 
-		//削除部位
+		int thisYear = LocalDate.now().getYear();
+		int thisMonth = LocalDate.now().getMonth().getValue();
+		String month = thisYear + "年" + thisMonth +"月";
+		model.addAttribute("month", month);
+		
+		LocalDate prevFirstDay = LocalDate.of(thisYear, thisMonth-1, 1);
+		model.addAttribute("prev",prevFirstDay);
+		
+		LocalDate nextFirstDay = LocalDate.of(thisYear, thisMonth+1, 1);
+		model.addAttribute("next",nextFirstDay);
 
 		List<LocalDate> week1 = new ArrayList<>();
 		List<LocalDate> week2 = new ArrayList<>();
